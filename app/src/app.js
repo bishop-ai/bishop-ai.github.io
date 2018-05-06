@@ -39,16 +39,19 @@ angular.module('bishop_ai').run([
               appName) {
 
         $rootScope.appName = appName;
-
-        BISHOP_AI.loadConfig({
-            enabledPlugins: {
-                "coinflip": true,
-                "timer": true,
-                "smalltalk": true
-            }
-        });
         BISHOP_AI.startSession();
         BISHOP_AI.linkSession("user1");
     }
 ]);
+
+// Load initial config before angular app is run.
+(function () {
+    BISHOP_AI.loadConfig({
+        enabledPlugins: {
+            "coinflip": true,
+            "timer": true,
+            "smalltalk": true
+        }
+    });
+})();
 

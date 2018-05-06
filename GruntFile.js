@@ -42,8 +42,8 @@ module.exports = function (grunt) {
     ];
 
     var toInject = [
-        "app/main.min.js",
         "app/bishop-ai-core/dist/bishop-ai-core.min.js",
+        "app/main.min.js",
         "app/bishop-ai-coinflip/index.js",
         "app/bishop-ai-smalltalk/index.js",
         "app/bishop-ai-timer/index.js"
@@ -51,8 +51,8 @@ module.exports = function (grunt) {
 
     var toInjectDebug = [
         "app/lib.js",
-        "app/src/**/*.js",
         "app/bishop-ai-core/dist/bishop-ai-core.js",
+        "app/src/**/*.js",
         "app/bishop-ai-coinflip/index.js",
         "app/bishop-ai-smalltalk/index.js",
         "app/bishop-ai-timer/index.js"
