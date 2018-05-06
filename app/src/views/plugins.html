@@ -1,0 +1,53 @@
+<div class="masthead clearfix">
+    <div class="inner">
+        <nav data-fade-out="true">
+            <ul class="nav masthead-nav">
+                <li><a href="#!/">Interface</a></li>
+                <li class="active"><a href="#!/plugins">Plugins</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <ul class="nav nav-tabs">
+        <li data-ng-repeat="tab in tabs" role="presentation" data-ng-class="{active: tab.active}" data-ng-click="setActiveTab($index)" data-ng-show="$index < 1">
+            <a href>{{tab.name}}</a>
+        </li>
+    </ul>
+
+    <br />
+
+    <div class="tab-container">
+        <div data-ng-show="tabs[0].active">
+
+            <div class="text-center" data-ng-show="plugins.length === 0">
+                <p>No plugins are loaded. Click <a href data-ng-click="setActiveTab(1)">Find New Plugins</a> to search for plugins to install.</p>
+            </div>
+
+            <div data-ng-show="plugins.length > 0" class="table-container">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th class="hidden-xs" style="width: 0"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr data-ng-repeat="plugin in plugins">
+                        <td><a data-ng-href="#!/plugins/{{plugin.namespace}}">{{plugin.namespace}}</a></td>
+                        <td>{{plugin.description}}</td>
+                        <td class="hidden-xs">
+                            <button data-ng-disabled="saving" data-ng-click="enablePlugin(plugin)" data-ng-show="!plugin.enabled" class="btn btn-primary btn-block">Enable</button>
+                            <button data-ng-disabled="saving" data-ng-click="disablePlugin(plugin)" data-ng-show="plugin.enabled" class="btn btn-default btn-block">Disable</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>
