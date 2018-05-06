@@ -39,9 +39,6 @@ angular.module('bishop_ai').run([
               appName) {
 
         $rootScope.appName = appName;
-        $rootScope.logout = function () {
-            BISHOP_AI.unlinkSession();
-        };
 
         BISHOP_AI.loadConfig({
             enabledPlugins: {
@@ -50,7 +47,6 @@ angular.module('bishop_ai').run([
                 "smalltalk": true
             }
         });
-
         BISHOP_AI.startSession();
         BISHOP_AI.linkSession("user1");
     }
