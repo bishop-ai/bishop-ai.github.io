@@ -1,6 +1,8 @@
+var bishopAi = require('bishop-ai-core');
+
 angular.module('bishop_ai', ['ngAnimate', 'ngRoute', 'ngSanitize']);
 
-angular.module('bishop_ai').constant('version', "1.0.0");
+angular.module('bishop_ai').constant('version', "0.3.0");
 angular.module('bishop_ai').constant('debugMode', 0);
 angular.module('bishop_ai').constant('appName', 'Bishop AI');
 
@@ -23,8 +25,8 @@ angular.module('bishop_ai').config([
                 templateUrl: 'app/src/views/plugin.html',
                 controller: 'PluginCtrl',
                 resolve: {
-                    plugin: ['$route', function ($route) {
-                        return BISHOP_AI.getPlugin($route.current.params.namespace);
+                    plugin: ['$route', 'bishopAiSession', function ($route, bishopAiSession) {
+                        return bishopAiSession.getPlugin($route.current.params.namespace);
                     }]
                 }
             });
@@ -39,19 +41,34 @@ angular.module('bishop_ai').run([
               appName) {
 
         $rootScope.appName = appName;
-        BISHOP_AI.startSession();
-        BISHOP_AI.linkSession("user1");
+    }
+]);
+
+angular.module('bishop_ai').factory('bishopAiSession', [
+
+    function () {
+        var bishopAiSession = bishopAi.startSession();
+        bishopAiSession.link("user1");
+        return bishopAiSession;
     }
 ]);
 
 // Load initial config before angular app is run.
 (function () {
-    BISHOP_AI.loadConfig({
+    var coinflip = require('bishop-ai-coinflip');
+    var smalltalk = require('bishop-ai-smalltalk');
+    var timer = require('bishop-ai-timer');
+
+    bishopAi.loadConfig({
         enabledPlugins: {
             "coinflip": true,
             "timer": true,
             "smalltalk": true
         }
     });
+
+    bishopAi.registerPlugin(coinflip);
+    bishopAi.registerPlugin(smalltalk);
+    bishopAi.registerPlugin(timer);
 })();
 

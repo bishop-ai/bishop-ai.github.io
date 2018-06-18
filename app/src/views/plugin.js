@@ -2,30 +2,32 @@ angular.module('bishop_ai').controller('PluginCtrl', [
     '$rootScope',
     '$scope',
     '$interpolate',
+    'bishopAiSession',
     'plugin',
 
     function ($rootScope,
               $scope,
               $interpolate,
+              bishopAiSession,
               plugin) {
 
         $scope.plugin = plugin;
         $scope.saving = false;
 
         $scope.updatePluginOptions = function () {
-            BISHOP_AI.updatePlugin($scope.plugin.namespace, $scope.plugin);
+            bishopAiSession.updatePlugin($scope.plugin.namespace, $scope.plugin);
             $rootScope.$broadcast("fire");
         };
 
         $scope.enablePlugin = function () {
             $scope.plugin.enabled = true;
-            BISHOP_AI.updatePlugin($scope.plugin.namespace, $scope.plugin);
+            bishopAiSession.updatePlugin($scope.plugin.namespace, $scope.plugin);
             $rootScope.$broadcast("fire");
         };
 
         $scope.disablePlugin = function () {
             $scope.plugin.enabled = false;
-            BISHOP_AI.updatePlugin($scope.plugin.namespace, $scope.plugin);
+            bishopAiSession.updatePlugin($scope.plugin.namespace, $scope.plugin);
             $rootScope.$broadcast("fire");
         };
 

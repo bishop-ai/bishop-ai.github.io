@@ -3,15 +3,17 @@ angular.module('bishop_ai').controller('InterfaceCtrl', [
     '$scope',
     '$sanitize',
     '$timeout',
+    'bishopAiSession',
     'speechService',
 
     function ($rootScope,
               $scope,
               $sanitize,
               $timeout,
+              bishopAiSession,
               speechService) {
 
-        var hotWord = "bishop_ai"; // Must be lowercase // TODO: Get this from the server and allow the server to update it at any time
+        var hotWord = "bishop"; // Must be lowercase // TODO: Get this from the server and allow the server to update it at any time
         var useHotWord = true; // TODO: Allow this to be set by the user
 
         $scope.message = "";
@@ -31,7 +33,7 @@ angular.module('bishop_ai').controller('InterfaceCtrl', [
             return !((isLastMessage) || (isSecondToLast && isLastAi));
         };
 
-        BISHOP_AI.onResponse(function (result) {
+        bishopAiSession.onResponse(function (result) {
             messageReceivedTime = (new Date()).getTime();
 
             var randomStartDelay = Math.floor(Math.random() * 400) + 200;
@@ -75,7 +77,7 @@ angular.module('bishop_ai').controller('InterfaceCtrl', [
 
         $scope.handleKeyPress = function (event) {
             if (event.which === 13 && $scope.message) {
-                BISHOP_AI.sendCommand($scope.message);
+                bishopAiSession.sendCommand($scope.message);
                 $scope.transcript.push({m: $scope.message, ai: false});
                 $scope.message = "";
                 event.preventDefault();
@@ -122,7 +124,7 @@ angular.module('bishop_ai').controller('InterfaceCtrl', [
             } else {
                 if (transcript) {
                     console.log('Voice Match: ' + transcript);
-                    BISHOP_AI.sendCommand(transcript);
+                    bishopAiSession.sendCommand(transcript);
                     $scope.transcript.push({html: null, m: transcript, ai: false});
                     messageSentTime = (new Date()).getTime();
                 }
@@ -141,7 +143,7 @@ angular.module('bishop_ai').controller('InterfaceCtrl', [
 
             if (command) {
                 console.log('Voice Match: ' + transcript);
-                BISHOP_AI.sendCommand(command);
+                bishopAiSession.sendCommand(command);
                 $scope.transcript.push({html: null, m: transcript, ai: false});
                 messageSentTime = (new Date()).getTime();
             } else {

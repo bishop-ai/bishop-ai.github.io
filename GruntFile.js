@@ -1,20 +1,6 @@
 module.exports = function (grunt) {
     'use strict';
 
-    /**
-     * Every folder that contains JavaScript files that need to be included in the app (that are not 3rd party libs)
-     * must be added here.
-     **/
-    var srcJs = [
-        "app/src/**/*.js"
-    ];
-
-    /**
-     * All JavaScript Library files should be included here. If a file is added or removed, it needs to be added/removed
-     * here as well. This is order dependant for example: jQuery is defined before Angular so that Angular uses the full
-     * jQuery library rather than its subset and all other libraries that depend on jQuery are defined after jQuery.
-     *
-     **/
     var libJs = [
         "node_modules/jquery/dist/jquery.min.js",
         "node_modules/bootstrap/dist/js/bootstrap.min.js",
@@ -24,7 +10,6 @@ module.exports = function (grunt) {
         "node_modules/angular-sanitize/angular-sanitize.min.js",
         "node_modules/particles.js/particles.js"
     ];
-
     var bootstrap = [
         "./node_modules/bootstrap/dist/css/bootstrap.min.css",
         "./node_modules/bootstrap/dist/css/bootstrap-theme.min.css"
@@ -33,29 +18,11 @@ module.exports = function (grunt) {
         "./node_modules/bootstrap/dist/fonts/*"
     ];
 
-    var toCopy = [
-        "bishop-ai-core/dist/bishop-ai-core.min.js",
-        "bishop-ai-core/dist/bishop-ai-core.js",
-        "bishop-ai-coinflip/index.js",
-        "bishop-ai-smalltalk/index.js",
-        "bishop-ai-timer/index.js"
-    ];
-
-    var toInject = [
-        "app/bishop-ai-core/dist/bishop-ai-core.min.js",
-        "app/main.min.js",
-        "app/bishop-ai-coinflip/index.js",
-        "app/bishop-ai-smalltalk/index.js",
-        "app/bishop-ai-timer/index.js"
-    ];
-
-    var toInjectDebug = [
-        "app/lib.js",
-        "app/bishop-ai-core/dist/bishop-ai-core.js",
-        "app/src/**/*.js",
-        "app/bishop-ai-coinflip/index.js",
-        "app/bishop-ai-smalltalk/index.js",
-        "app/bishop-ai-timer/index.js"
+    var toBrowserify = [
+        "../bishop-ai-core/index.js",
+        "../bishop-ai-coinflip/index.js",
+        "../bishop-ai-smalltalk/index.js",
+        "../bishop-ai-timer/index.js"
     ];
 
     // Setup Grunt tasks
@@ -69,8 +36,24 @@ module.exports = function (grunt) {
                     banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
                     sourceMap: false
                 },
-                src: libJs.concat(srcJs),
+                src: libJs.concat(['app/bishop-ai.js', 'app/src/**/*.js']),
                 dest: 'app/main.min.js'
+            }
+        },
+
+        browserify: {
+            dist: {
+                options: {
+                    banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' + '<%= grunt.template.today("yyyy-mm-dd") %> */',
+                    alias: {
+                        'bishop-ai-core': '../bishop-ai-core/index.js',
+                        'bishop-ai-coinflip': '../bishop-ai-coinflip/index.js',
+                        'bishop-ai-smalltalk': '../bishop-ai-smalltalk/index.js',
+                        'bishop-ai-timer': '../bishop-ai-timer/index.js'
+                    }
+                },
+                src: toBrowserify,
+                dest: 'app/bishop-ai.js'
             }
         },
 
@@ -78,7 +61,6 @@ module.exports = function (grunt) {
             main: {
                 files: [
                     { src: 'index.html', dest: 'debug.html' },
-                    { expand: true, cwd: '../', src: toCopy, dest: './app/' },
                     { expand: true, src: bootstrap, dest: './app/src/styles/', flatten: true },
                     { expand: true, src: bootstrapFonts, dest: './app/src/styles/fonts', flatten: true }
                 ]
@@ -98,19 +80,23 @@ module.exports = function (grunt) {
                     addRootSlash: false
                 },
                 files: {
-                    'index.html': toInject,
-                    'debug.html': toInjectDebug
+                    'debug.html': [
+                        'app/lib.js',
+                        'app/bishop-ai.js',
+                        'app/src/**/*.js'
+                    ]
                 }
             }
         }
     });
 
     // Load the Grunt plugins
+    grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-injector');
 
     // Runs unit tests
-    grunt.registerTask('default', ['uglify', 'copy', 'concat', 'injector']);
+    grunt.registerTask('default', ['browserify', 'uglify', 'copy', 'concat', 'injector']);
 };

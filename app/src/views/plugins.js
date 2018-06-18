@@ -1,11 +1,13 @@
 angular.module('bishop_ai').controller('PluginsCtrl', [
     '$rootScope',
     '$scope',
+    'bishopAiSession',
 
     function ($rootScope,
-              $scope) {
+              $scope,
+              bishopAiSession) {
 
-        $scope.plugins = BISHOP_AI.getPlugins();
+        $scope.plugins = bishopAiSession.getPlugins();
         $scope.availablePackages = [];
         $scope.saving = false;
         $scope.filter = "";
@@ -24,13 +26,13 @@ angular.module('bishop_ai').controller('PluginsCtrl', [
 
         $scope.enablePlugin = function (plugin) {
             plugin.enabled = true;
-            BISHOP_AI.updatePlugin(plugin.namespace, plugin);
+            bishopAiSession.updatePlugin(plugin.namespace, plugin);
             $rootScope.$broadcast("fire");
         };
 
         $scope.disablePlugin = function (plugin) {
             plugin.enabled = false;
-            BISHOP_AI.updatePlugin(plugin.namespace, plugin);
+            bishopAiSession.updatePlugin(plugin.namespace, plugin);
             $rootScope.$broadcast("fire");
         };
     }
